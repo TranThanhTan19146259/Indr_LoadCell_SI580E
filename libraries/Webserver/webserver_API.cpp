@@ -362,7 +362,7 @@ void on_postReq_time_send_pt100_data(AsyncWebServerRequest *request, uint8_t *da
             return;
         }
         uint8_t timeSend = doc["timeSend"]; // 
-        ESP_LOGD(TAG, "parsed data timeSend: %d", timeSend);
+        ESP_LOGD(TAG, "parsed +ata timeSend: %d", timeSend);
         EEPROM.write(0, timeSend);
         EEPROM.commit();
         char buf_time_send[80];

@@ -91,12 +91,12 @@ void mqtt_handle_task_code(void * parameter)
     while(1)
     {
         // ESP_LOGD(TAG,"connect falg: %d",myRam.wifi_config_data.is_wifi_connected);
-        if (myRam.wifi_config_data.wifi_ap_sta == 1)
+        if (myRam.working_status.esp_working_modes != SLEEP)
         {
-          if (myRam.working_status.esp_working_modes != SLEEP)
-          {
-              handle_mqtt();
-          }
+            handle_mqtt();
+        }
+        if (myRam.wifi_config_data.is_wifi_connected == 1)
+        {
             // ESP_LOGD(TAG, "MQTT!!!!!"); 
         }
     }
@@ -114,12 +114,15 @@ void init_hw()
     myRam.working_status.esp_working_modes = ACTIVE_MODE;
 
     thermo.begin(MAX31865_3WIRE);  // set to 2WIRE or 4WIRE as necessary
+    
+    init_loadcell();
     xTaskCreatePinnedToCore(mqtt_handle_task_code,"mqtt",30000,NULL,1,&MqttTask,1);  delay(500);   
     
 }
 
 void handle_hw()
 {
+  handle_loadcell();
   static bool now_wifi_status, last_wifi_status;
   if (myRam.wifi_config_data.wifi_ap_sta == 1)
   {

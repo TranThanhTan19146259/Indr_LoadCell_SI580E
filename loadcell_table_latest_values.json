@@ -1,0 +1,19 @@
+{
+  "alias": "Loadcell Table",
+  "name": "loadcell_table",
+  "image": null,
+  "description": "Table widget for displaying loadcell data",
+  "descriptor": {
+    "type": "latest",
+    "sizeX": 8,
+    "sizeY": 6,
+    "resources": [],
+    "templateHtml": "<div fxFlex fxLayout=\"column\" style=\"height: 100%;\">\n    <table style=\"width: 100%;\">\n        <thead>\n            <tr>\n                <th>Parameter</th>\n                <th>Value</th>\n            </tr>\n        </thead>\n        <tbody>\n            <tr ng-repeat=\"dataKey in data\">\n                <td>{{dataKey.dataKey.label}}</td>\n                <td>{{dataKey.data[0][1]}}</td>\n            </tr>\n        </tbody>\n    </table>\n</div>",
+    "templateCss": "table { border-collapse: collapse; }\nth, td { border: 1px solid #ddd; padding: 8px; text-align: left; }\nth { background-color: #f2f2f2; }",
+    "controllerScript": "self.onInit = function() {\n    self.ctx.$scope.data = self.ctx.data;\n}\n\nself.onDataUpdated = function() {\n    self.ctx.$scope.data = self.ctx.data;\n    self.ctx.detectChanges();\n}",
+    "settingsSchema": "{}",
+    "dataKeySettingsSchema": "{}",
+    "defaultConfig": "{\"datasources\":[{\"type\":\"entity\",\"name\":\"Loadcell\",\"entityAliasId\":null,\"dataKeys\":[{\"name\":\"max_load\",\"type\":\"timeseries\",\"label\":\"Max Load (kg)\"},{\"name\":\"analog_value_high\",\"type\":\"timeseries\",\"label\":\"Analog High\"},{\"name\":\"analog_value_low\",\"type\":\"timeseries\",\"label\":\"Analog Low\"},{\"name\":\"span_value_high\",\"type\":\"timeseries\",\"label\":\"Span High\"},{\"name\":\"span_value_low\",\"type\":\"timeseries\",\"label\":\"Span Low\"}]}],\"settings\":{\"showHeader\":true}}"
+  },
+  "tags": ["loadcell", "table"]
+}

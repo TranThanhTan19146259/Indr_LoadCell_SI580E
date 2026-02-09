@@ -19,8 +19,8 @@
 // data array for modbus network sharing
 uint16_t au16data[16];
 uint8_t u8state;
-#define RXD2 17
-#define TXD2 16
+#define RXD2 33
+#define TXD2 27
 HardwareSerial Serial_PT100(2);
 /**
  *  Modbus object declaration
@@ -57,7 +57,7 @@ void loop() {
     telegram.u8id = 1; // slave address
     telegram.u8fct = 3; // function code (this one is registers read)
     telegram.u16RegAdd = 0; // start address in slave
-    telegram.u16CoilsNo = 4; // number of elements (coils or registers) to read
+    telegram.u16CoilsNo = 6; // number of elements (coils or registers) to read
     telegram.au16reg = au16data; // pointer to a memory array in the Arduino
 
     master.query( telegram ); // send query (only once)

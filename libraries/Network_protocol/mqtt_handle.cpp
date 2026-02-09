@@ -175,36 +175,94 @@ void initMqtt()
   myRam.mqtt_config_data.password = password; 
   client.setServer(myRam.mqtt_config_data.host.c_str(), myRam.mqtt_config_data.port);
   client.setCallback(callback);
-  // client.setBufferSize(MQTT_MAX_BUFFER);
+  client.setBufferSize(MQTT_MAX_BUFFER);
   connect_to_broker((char*)myRam.mqtt_config_data.username.c_str(), (char*)myRam.mqtt_config_data.password.c_str());
 }
 
 void handle_mqtt()
 {
   reconnectMqtt();
-  static uint32_t t_send_data = 0;  
-  if (millis() - t_send_data > 1000)
+
+  static uint32_t t_send = 0;
+  static uint8_t send_case = 0;   // 0 = step 1, 1 = step 2
+
+  if (millis() - t_send < 1000) return;
+  t_send = millis();
+
+  if (isConnectedBroker != 1) return;
+  if (myRam.working_status.esp_working_modes != ACTIVE_MODE) return;
+
+  StaticJsonDocument<512> doc;
+  String output;
+
+  switch (send_case)
   {
-    if (isConnectedBroker == 1)
-    {
-      if (myRam.working_status.esp_working_modes == ACTIVE_MODE)
-      {
-        String output;
-        StaticJsonDocument<32> doc;
-        // doc["temp"] = myRam.pt100_data.temp;
-        doc["temp"] = 100;
-        doc["R"] = myRam.pt100_data.resistor;
+    case 0:
+      // ========== STEP 1 ==========
+      doc["step"] = 1;
 
-        serializeJson(doc, output);
-        send_data_mqtt(PT100_LOGGER_TB_PUBLISH, output);
-        // Serial.println(output);
-        // myRam.working_status.esp_working_modes = ENTER_SLEEP_MODE;
-      }
-      
-    }
+      doc["Max_load"] = myRam.loadcell_data.capacity_kg;
 
-    t_send_data = millis();
+      doc["Analog Value_High"] = myRam.loadcell_data.Analog_value_high;
+      doc["Analog Value_Low"]  = myRam.loadcell_data.Analog_value_low;
+
+      doc["Span Value_High"] = myRam.loadcell_data.Span_value_high;
+      doc["Span Value_Low"]  = myRam.loadcell_data.Span_value_low;
+
+      doc["Division"] = myRam.loadcell_data.Division;
+      doc["Decimal Point"] = myRam.loadcell_data.Decimal_point;
+
+      doc["Current Weight High"] = myRam.loadcell_data.Current_weight_high;
+      doc["Current Weight Low"]  = myRam.loadcell_data.Current_weight_low;
+
+      doc["Tare Weight High"] = myRam.loadcell_data.Tare_weight_high;
+      doc["Tare Weight Low"]  = myRam.loadcell_data.Tare_weight_low;
+
+      doc["Measured Weight High"] = myRam.loadcell_data.Measured_weight_High;
+      doc["Measured Weight Low"]  = myRam.loadcell_data.Measured_weight_Low;
+
+      send_case = 1;   // lần sau gửi step 2
+      break;
+
+    case 1:
+      // ========== STEP 2 ==========
+      doc["step"] = 2;
+
+      doc["Digital Input"] = myRam.loadcell_data.Digital_input;
+      doc["Lamp"]          = myRam.loadcell_data.Lamp;
+      doc["Error"]         = myRam.loadcell_data.Error;
+
+      doc["Weighing Mode"] = myRam.loadcell_data.Weighing_mode;
+      doc["Weighing Step"] = myRam.loadcell_data.Weighing_step;
+
+      doc["Grand total Count"]  = myRam.loadcell_data.Grand_Count;
+      doc["Grand total Weight"] = myRam.loadcell_data.Grand_Weight;
+
+      doc["Date"] = myRam.loadcell_data.Date;
+      doc["Time"] = myRam.loadcell_data.Time;
+
+      doc["Key_value"] = myRam.loadcell_data.Key_value;
+      doc["Relay_output"] = myRam.loadcell_data.Relay_output;
+
+      doc["SP1"] = myRam.loadcell_data.Current_SP1;
+      doc["SP2"] = myRam.loadcell_data.Current_SP2;
+      doc["SP3"] = myRam.loadcell_data.Current_SP3;
+      doc["SP4"] = myRam.loadcell_data.Current_SP4;
+
+      doc["ffo_SP1"] = myRam.loadcell_data.Free_fall_SP1;
+      doc["ffo_SP2"] = myRam.loadcell_data.Free_fall_SP2;
+      doc["ffo_SP3"] = myRam.loadcell_data.Free_fall_SP3;
+      doc["ffo_SP4"] = myRam.loadcell_data.Free_fall_SP4;
+
+      send_case = 0;   // quay lại step 1
+      break;
   }
+
+  serializeJson(doc, output);
+  send_data_mqtt(PT100_LOGGER_TB_PUBLISH, output);
+  Serial.println(output);
+}
+
   
   
   
@@ -213,4 +271,3 @@ void handle_mqtt()
   // {
   // t_send_data_to_sv = millis();
   // }
-}

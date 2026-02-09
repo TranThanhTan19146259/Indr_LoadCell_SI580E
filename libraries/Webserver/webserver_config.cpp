@@ -6,7 +6,7 @@ AsyncWebServer server(80);
 
 void initWifiMode()
 {
-  setCpuFrequencyMhz(240);
+  setCpuFrequencyMhz(80);
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;

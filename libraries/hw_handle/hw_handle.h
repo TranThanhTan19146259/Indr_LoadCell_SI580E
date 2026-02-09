@@ -9,7 +9,7 @@
 
 
 #include <Adafruit_MAX31865.h>
-
+#include "loadcel_si580e.h"
 // The value of the Rref resistor. Use 430.0 for PT100 and 4300.0 for PT1000
 #define RREF      430.0
 #define RNOMINAL  100.0
