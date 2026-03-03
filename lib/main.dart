@@ -17,6 +17,7 @@ class _MyAppState extends State<MyApp> {
   String _status = "Idle";
   String _errorMessage = "";
   String _weightValue = "0.00";
+  String _rfidCode = "RFID";
   List<Widget> _ports = [];
   List<Widget> _serialData = [];
 
@@ -83,10 +84,11 @@ class _MyAppState extends State<MyApp> {
         if(line.contains("RAW_DATA")){
           try {
             List<String> parts = line.split(" ");
-            if (parts.length >= 3) {
+            if (parts.length >= 4) {
               String weightStr = parts[2]; // Lấy phần tử thứ 3
               _weightValue = weightStr;
-              print("Updated weight: $_weightValue");
+              String rfidStr = parts[3];
+              _rfidCode = rfidStr;
             }
           } catch (e) {
             print("Error parsing weight: $e");
@@ -199,6 +201,7 @@ class _MyAppState extends State<MyApp> {
           textController: _textController,
           errorMessage: _errorMessage,
           weightValue: _weightValue,
+          rfidCode: _rfidCode,
           onSend: () async{
             if(_port == null) {
               return;
@@ -218,6 +221,7 @@ class HomeScreen extends StatelessWidget {
   final String status;
   final String errorMessage;
   final String weightValue;
+  final String rfidCode;
   final UsbPort? port;
   final List<Widget> serialData;
   final TextEditingController textController;
@@ -231,6 +235,7 @@ class HomeScreen extends StatelessWidget {
     this.errorMessage  = "",
     this.port,
     this.weightValue = "0.00",
+    this.rfidCode = "RFID",
     this.serialData = const [],
     required this.textController,
     required this.onSend,
@@ -343,6 +348,19 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                textAlign: TextAlign.right,
+                rfidCode,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
             ),
