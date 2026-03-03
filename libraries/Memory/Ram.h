@@ -8,6 +8,7 @@ typedef struct Ram{
     Esp_working_status_t working_status;
     Mqtt_config_data_t mqtt_config_data;
     Loadcell_SI580E_t loadcell_data;
+    rfid_t rfid;
 }Ram_t;
 
 extern Ram_t myRam;

@@ -33,6 +33,7 @@ typedef struct Mqtt_config_data
 
 typedef struct Loadcell_SI580E
 {
+    uint8_t device_id;
     // Address 1-2: Capacity (32-bit)
     float capacity_kg;
     
@@ -53,6 +54,7 @@ typedef struct Loadcell_SI580E
     // // Address 11-12: Current Weight (32-bit)
     float Current_weight_high;
     float Current_weight_low;
+    float current_weight_kg;
 
     // // Address 13-14: Tare Weight (32-bit)
     float Tare_weight_high;
@@ -119,6 +121,13 @@ typedef struct Loadcell_SI580E
     uint16_t Free_fall_SP4;
     
 } Loadcell_SI580E_t;
+
+typedef struct rfid
+{
+    byte nuidPICC[4];
+
+} rfid_t;
+
 
 
 typedef enum Esp_working_modes{

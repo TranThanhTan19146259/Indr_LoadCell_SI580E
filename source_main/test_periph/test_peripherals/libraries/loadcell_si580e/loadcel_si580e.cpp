@@ -327,10 +327,12 @@ void fake_loadcell_simulator()
 void print_loadcell_data()
 {
     char buffer[64];
-    sprintf(buffer, "RAW_DATA %d %.2f %d\r\n", 
+    String rfid_code;
+    rfid_code = "AABBCCDD";
+    sprintf(buffer, "RAW_DATA %d %.2f %s\r\n", 
             myRam.loadcell_data.device_id,
             myRam.loadcell_data.current_weight_kg,
-            myRam.loadcell_data.Error);
+            rfid_code.c_str());
     Serial.print(buffer);
 }
 // ========================================================
